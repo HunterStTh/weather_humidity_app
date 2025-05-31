@@ -45,7 +45,7 @@ class _CalculationsScreenState extends State<CalculationsScreen> {
 
   // Метод открывает статью о влиянии влажности на здоровье с помощью url_launcher
   Future<void> _openHumidityArticle() async {
-    const url = 'https://www.healthline.com/health/humidity-levels'; 
+    const url = 'https://www.cge48.ru/gigienicheskoe-vospitanie-i-obuchenie/informaciya-dlya-naseleniya/1447.htm?ysclid=mbbxgbdok4873648962'; 
     if (await canLaunchUrl(Uri.parse(url))) {
       await launchUrl(Uri.parse(url));
     } else {
