@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart'; // Для форматирования даты
 import 'package:weather_humidity_app/bloc/weather_bloc.dart';
 import 'package:weather_humidity_app/models/weather_model.dart';
 
@@ -11,24 +11,28 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Контроллер для текстового поля ввода города
     final TextEditingController cityController = TextEditingController();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Калькулятор температуры'),
         actions: [
+          // Кнопка перехода на экран разработчика
           IconButton(
             icon: const Icon(Icons.person),
             onPressed: () {
               Navigator.pushNamed(context, '/developer');
             },
           ),
+          // Кнопка перехода на экран расчетов
           IconButton(
             icon: const Icon(Icons.calculate),
             onPressed: () {
               Navigator.pushNamed(context, '/calculations');
             },
           ),
+          // Кнопка перехода на экран камеры
           IconButton(
             icon: const Icon(Icons.camera_alt),
             onPressed: () {
@@ -41,6 +45,7 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            // Строка с полем ввода и кнопкой поиска
             Row(
               children: [
                 Expanded(
@@ -56,7 +61,9 @@ class HomeScreen extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     if (cityController.text.isNotEmpty) {
+                      // Отправка события для загрузки погоды
                       context.read<WeatherBloc>().add(FetchWeather(cityController.text));
+                      // Отправка события для загрузки истории
                       context.read<WeatherBloc>().add(LoadWeatherHistory());
                     }
                   },
@@ -65,6 +72,8 @@ class HomeScreen extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
+            
+            // Блок для отображения состояния погоды
             BlocBuilder<WeatherBloc, WeatherState>(
               builder: (context, state) {
                 if (state is WeatherLoading) {
@@ -80,15 +89,21 @@ class HomeScreen extends StatelessWidget {
               },
             ),
             const SizedBox(height: 20),
+            
+            // Заголовок для истории поиска
             const Text(
               'История поиска',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
+            
+            // Список истории поиска
             Expanded(
               child: ValueListenableBuilder(
+                // Слушатель изменений в Hive-боксе
                 valueListenable: Hive.box<WeatherData>('weather_history').listenable(),
                 builder: (context, Box<WeatherData> box, _) {
+                  // Получение и сортировка истории по дате (новые сверху)
                   final history = box.values.toList()
                     ..sort((a, b) => b.timestamp.compareTo(a.timestamp));
                   
@@ -96,6 +111,7 @@ class HomeScreen extends StatelessWidget {
                     return const Center(child: Text('История пуста'));
                   }
                   
+                  // Построение списка истории
                   return ListView.builder(
                     itemCount: history.length,
                     itemBuilder: (context, index) {
@@ -104,8 +120,10 @@ class HomeScreen extends StatelessWidget {
                         child: ListTile(
                           title: Text(weather.city),
                           subtitle: Text('${weather.temperature}°C, ${weather.humidity}% влажность'),
+                          // Форматирование даты
                           trailing: Text(DateFormat('MMM d, H:mm').format(weather.timestamp)),
                           onTap: () {
+                            // Заполнение поля и повторный запрос при тапе
                             cityController.text = weather.city;
                             context.read<WeatherBloc>().add(FetchWeather(weather.city));
                           },
@@ -122,6 +140,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // Виджет для отображения карточки с текущей погодой
   Widget _buildWeatherCard(WeatherData weather) {
     return Card(
       elevation: 5,

@@ -1,19 +1,32 @@
+// Указываем, что этот файл является частью weather_bloc.dart
+// Это необходимо для работы кодогенерации
 part of 'weather_bloc.dart';
 
+// Абстрактный базовый класс для всех событий, связанных с погодой
+// Наследуется от Equatable для упрощения сравнения объектов
 abstract class WeatherEvent extends Equatable {
-  const WeatherEvent();
+  const WeatherEvent();  // Конструктор для событий
 
   @override
-  List<Object> get props => [];
+  // Переопределяем метод props из Equatable
+  // Возвращает список свойств, которые используются для сравнения объектов
+  List<Object> get props => [];  // По умолчанию пустой список
 }
 
+// Конкретное событие - запрос данных о погоде для определенного города
 class FetchWeather extends WeatherEvent {
-  final String city;
+  final String city;  // Название города, для которого запрашивается погода
 
+  // Конструктор, принимающий название города
   const FetchWeather(this.city);
 
   @override
-  List<Object> get props => [city];
+  // Переопределяем props, включая город для корректного сравнения событий
+  List<Object> get props => [city];  // Теперь список содержит только город
 }
 
-class LoadWeatherHistory extends WeatherEvent {}
+// Конкретное событие - запрос истории предыдущих запросов погоды
+class LoadWeatherHistory extends WeatherEvent {
+  // Это событие не требует дополнительных данных,
+  // поэтому класс пустой (кроме унаследованных членов)
+}
