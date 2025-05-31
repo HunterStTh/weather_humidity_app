@@ -1,0 +1,5 @@
+/*
+!/lib
+!/android/app/src
+!/build/flutter_assets
+!.gitignore
